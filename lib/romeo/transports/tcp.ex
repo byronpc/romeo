@@ -200,6 +200,8 @@ defmodule Romeo.Transports.TCP do
   def recv({:ok, conn}, fun), do: recv(conn, fun)
   def recv(%Conn{socket: {:gen_tcp, socket}, timeout: timeout} = conn, fun) do
     receive do
+      {:xmlstreamcdata, " "} ->
+        recv(conn, fun)
       {:xmlstreamelement, stanza} ->
         fun.(conn, stanza)
       {:tcp, ^socket, data} ->
@@ -221,6 +223,8 @@ defmodule Romeo.Transports.TCP do
   end
   def recv(%Conn{socket: {:ssl, socket}, timeout: timeout} = conn, fun) do
     receive do
+      {:xmlstreamcdata, " "} ->
+        recv(conn, fun)
       {:xmlstreamelement, stanza} ->
         fun.(conn, stanza)
       {:ssl, ^socket, " "} ->
